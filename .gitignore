@@ -1,0 +1,8 @@
+# Entorno
+__pycache__
+venv
+
+# Modelo y pesos
+lstm_finetuned1.keras.zip
+./lstm_finetuned1.keras.zip
+lstm_finetuned1.keras

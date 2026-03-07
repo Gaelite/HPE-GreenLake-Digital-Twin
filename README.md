@@ -1,8 +1,16 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digital Twin — Vehículos de Emergencia
+
+POC de un gemelo digital para flotas de emergencia. Un motor de simulación genera telemetría continua cada 5 segundos, ejecuta pathfinding A\* sobre un grafo de calles de Madrid y gestiona el ciclo de vida completo de incidentes. Un modelo LSTM predice fallas mecánicas por vehículo y penaliza el motor de despacho según el nivel de riesgo. Todo fluye en vivo al dashboard vía Supabase Realtime.
+
+🔗 **Demo:** [emergency-vehicles.xyz/dashboard](https://emergency-vehicles.xyz/dashboard)
+
+---
 
 ## Getting Started
 
-First, run the development server:
+Este proyecto está construido con [Next.js](https://nextjs.org) usando [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+Corre el servidor de desarrollo:
 
 ```bash
 npm run dev
@@ -14,23 +22,80 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Arquitectura
 
-## Learn More
+```
+Frontend (Next.js)
+    └── Supabase (PostgreSQL + Realtime)
+            └── Motor de Simulación (Node.js)
+                    └── Microservicio IA (FastAPI · puerto 8001)
+```
 
-To learn more about Next.js, take a look at the following resources:
+Cada tick (5 s) ejecuta 4 fases:
+```
+executeTick()
+  ├── 1. Telemetría + Movimiento de Vehículos
+  ├── 2. Ciclo de Vida de Incidentes (crear → despachar → llegar → resolver)
+  ├── 3. Detección de Anomalías
+  └── 4. Generación de Insights (cada 12 ticks)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Features
 
-## Deploy on Vercel
+- **Simulación en tiempo real** — telemetría de 9 variables por vehículo cada 5 s
+- **Pathfinding A\*** — grafo de ~130 nodos sobre calles reales de Madrid, densificado a >200 nodos para interpolación GPS suave
+- **Despacho inteligente** — asigna el vehículo más cercano por distancia vial (Dijkstra) con afinidad por tipo de emergencia
+- **Detección de anomalías** — motor de reglas con umbrales configurables y severidades: informacional / advertencia / crítico
+- **Mantenimiento predictivo (LSTM)** — modelo entrenado con 150k+ lecturas, AUC-ROC 0.75–0.80, inferencia <100 ms por vehículo
+- **Rutas dinámicas** — visualización vía TomTom/OSRM con recalculo automático al aparecer obstáculos
+- **Dashboard interactivo** — mapa en vivo, gráficas de telemetría, alertas e insights operacionales
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Modelo LSTM
+
+| Parámetro | Valor |
+|-----------|-------|
+| Input | 40 timesteps × 5 métricas |
+| Arquitectura | LSTM(64) → Dropout → LSTM(32) → Dropout → Dense(16) → Dense(1) |
+| Entrenamiento | 15 vehículos · 168 h · ~150,600 filas |
+| AUC-ROC validación | 0.75 – 0.80 |
+| Inferencia | < 100 ms por vehículo |
+
+Métricas de entrada: `engine_temp · oil_pressure · fuel_level · battery_voltage · tire_pressure`
+
+| Probabilidad | Nivel | Acción |
+|---|---|---|
+| P > 0.70 | 🔴 CRÍTICO | Mantenimiento inmediato |
+| 0.30 < P ≤ 0.70 | 🟡 ADVERTENCIA | Monitorear |
+| P ≤ 0.30 | 🟢 NORMAL | Sin acción |
+
+---
+
+## Ramas
+
+| Rama | Descripción |
+|------|-------------|
+| `main` | Frontend Next.js + motor de simulación |
+| `AI-Python-backend` | Microservicio FastAPI, modelo LSTM, scaler y pipeline de entrenamiento |
+
+---
+
+## Stack
+
+**Frontend:** Next.js · React · TailwindCSS · Recharts · Leaflet  
+**Simulación:** Node.js · TypeScript  
+**IA:** Python · FastAPI · TensorFlow/Keras · scikit-learn  
+**Base de datos:** Supabase (PostgreSQL + Realtime)  
+**Mapas:** TomTom Routing API · OSRM  
+**Despliegue:** Vercel
+
+---
+
+*Made with love by mazapan de nuez*

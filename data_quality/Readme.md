@@ -1,7 +1,7 @@
 # Data Quality Validation - Emergency Vehicles Digital Twin
 
 **Role**: Data Quality Engineer  
-**Author**: [Tu Nombre]  
+**Author**: Eduardo Gael Garcia Zuviria
 **Dataset**: Emergency vehicle telemetry and operations data
 
 ---
@@ -60,7 +60,7 @@ python data_quality/generate_html.py
 ## Demo Report (S3)
 
 **Live HTML Report**:  
-[PEGA_AQUI_LA_URL_QUE_COPIASTE]
+[https://emergency-vehicles-reports.s3.amazonaws.com/data-quality/html/validation_report_20260517_144921.html]
 
 Example:
 https://emergency-vehicles-reports.s3.amazonaws.com/data-quality/html/validation_report_20260517_140540.html
@@ -121,7 +121,7 @@ python data_quality/validate_and_upload.py
 ## Demo Report (S3)
 
 **Live HTML Report**:  
-https://emergency-vehicles-reports.s3.amazonaws.com/data-quality/html/validation_report_20260517_144454.html
+https://emergency-vehicles-reports.s3.amazonaws.com/data-quality/html/validation_report_20260517_144921.html
 
 **Uploaded**: 2026-05-17 14:44:54 UTC  
 **Pass Rate**: 98.36% (60/61 checks passed)  

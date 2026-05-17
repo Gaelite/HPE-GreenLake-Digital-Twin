@@ -65,7 +65,7 @@ python data_quality/generate_html.py
 Example:
 https://emergency-vehicles-reports.s3.amazonaws.com/data-quality/html/validation_report_20260517_140540.html
 
-**Note**: Report uploaded manually for demonstration. In production, Role 4 (Orchestration Engineer) would automate S3 uploads via Lambda + EventBridge.
+**Note**: Report uploaded manually for demonstration. In production, Role 4 (Orchestration Engineer) would automate S3 uploads 
 
 ---
 

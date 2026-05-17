@@ -82,9 +82,14 @@ const METRIC_CONFIGS: Record<MetricType, MetricConfig> = {
   },
 };
 
+// // Base position (approximately center of a city — configurable)
+// const BASE_LAT = 40.4168; // Madrid, Spain
+// const BASE_LNG = -3.7038;
+// const POSITION_JITTER = 0.015; // ~1.5 km radius
+
 // Base position (approximately center of a city — configurable)
-const BASE_LAT = 40.4168; // Madrid, Spain
-const BASE_LNG = -3.7038;
+const BASE_LAT = 20.7214; // Zapopan/Guadalajara, Jalisco, Mexico
+const BASE_LNG = -103.3918;
 const POSITION_JITTER = 0.015; // ~1.5 km radius
 
 // Track last-known values per vehicle so readings drift realistically

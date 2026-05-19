@@ -1,0 +1,29 @@
+# Virtual environment
+venv/
+.venv/
+
+# Generated data — too big, regenerable from scripts
+data/raw/*.csv
+data/raw/combined/
+data/raw/telemetry_csv/
+data/processed/
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Credentials (extra safety, must never be committed)
+*.env
+.env*
+*credentials*
+*secret*
